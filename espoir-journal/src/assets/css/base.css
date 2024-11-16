@@ -1,0 +1,33 @@
+:root {
+  --colorWhite: 255, 255, 255;
+  --colorBlack: 0, 0, 0;
+  --colorRed: 255, 78, 78;
+  --colorLightGrey: 230,230,230
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+body, #app {
+  height: 100dvh;
+  font-family: 'Onest';
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 100vw; 
+  max-width: 100vw; 
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.white {
+  color: rgb(var(--colorWhite), 1) !important;
+}

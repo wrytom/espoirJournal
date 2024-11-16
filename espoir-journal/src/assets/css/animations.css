@@ -1,0 +1,49 @@
+@keyframes appear {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fluidBackground {
+    0% {
+      background-position: 0% 50%;
+      transform: rotate(0deg);
+      filter: hue-rotate(0deg);
+    }
+    25% {
+      background-position: 50% 100%;
+      transform: rotate(45deg);
+      filter: hue-rotate(90deg);
+    }
+    50% {
+      background-position: 100% 50%;
+      transform: rotate(90deg);
+      filter: hue-rotate(180deg);
+    }
+    75% {
+      background-position: 50% 0%;
+      transform: rotate(135deg);
+      filter: hue-rotate(270deg);
+    }
+    100% {
+      background-position: 0% 50%;
+      transform: rotate(180deg);
+      filter: hue-rotate(360deg);
+    }
+  }
+  
+

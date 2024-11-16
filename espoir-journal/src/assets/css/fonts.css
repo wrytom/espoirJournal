@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Onest';
+    src:  url('../fonts/Onest/Onest-Regular.ttf') format('truetype'),
+  }
+
+  @font-face {
+    font-family: 'Onest-Medium';
+    src:  url('../fonts/Onest/Onest-Medium.ttf') format('truetype'),
+  }
+
+  @font-face {
+    font-family: 'Onest-SemiBold';
+    src:  url('../fonts/Onest/Onest-SemiBold.ttf') format('truetype'),
+  }
