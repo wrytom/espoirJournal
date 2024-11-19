@@ -45,15 +45,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import gsap from 'gsap'
 import { Draggable } from 'gsap/Draggable'
 
-// Stores
 import { useDateStore } from '@/stores/dateStore'
 import { usePanelStore } from '@/stores/panelStore'
-
-// Components
 import DateBox from '@/components/Singles/SinglesDateBox.vue'
 
 gsap.registerPlugin(Draggable)
@@ -63,12 +60,15 @@ const panelStore = usePanelStore()
 const daysWrapper = ref(null)
 const slideWidth = ref(0)
 const draggableInstance = ref(null)
-const displayBaseDate = ref(new Date())
 
 const getWeekDates = (baseDate) => {
-  const curr = new Date(baseDate)
   const week = []
-  curr.setDate(curr.getDate() - curr.getDay())
+  const curr = new Date(baseDate)
+  
+  // Adjust to Monday
+  const dayOfWeek = curr.getDay()
+  const diff = curr.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)
+  curr.setDate(diff)
 
   for (let i = 0; i < 7; i++) {
     const dayDate = new Date(curr)
@@ -81,21 +81,19 @@ const getWeekDates = (baseDate) => {
   return week
 }
 
-const currentWeekDays = ref([])
-const previousWeekDays = ref([])
-const nextWeekDays = ref([])
+const currentBaseDate = ref(new Date())
 
-const initializeWeeks = () => {
-  currentWeekDays.value = getWeekDates(displayBaseDate.value)
-
-  const prevDate = new Date(displayBaseDate.value)
+const currentWeekDays = computed(() => getWeekDates(currentBaseDate.value))
+const previousWeekDays = computed(() => {
+  const prevDate = new Date(currentBaseDate.value)
   prevDate.setDate(prevDate.getDate() - 7)
-  previousWeekDays.value = getWeekDates(prevDate)
-
-  const nextDate = new Date(displayBaseDate.value)
+  return getWeekDates(prevDate)
+})
+const nextWeekDays = computed(() => {
+  const nextDate = new Date(currentBaseDate.value)
   nextDate.setDate(nextDate.getDate() + 7)
-  nextWeekDays.value = getWeekDates(nextDate)
-}
+  return getWeekDates(nextDate)
+})
 
 const isToday = (date) => {
   const today = new Date()
@@ -106,28 +104,23 @@ const isToday = (date) => {
   )
 }
 
-const updateWeeks = (direction) => {
-  if (direction === 'left') {
-    const newBaseDate = new Date(displayBaseDate.value)
-    newBaseDate.setDate(newBaseDate.getDate() - 7)
-    displayBaseDate.value = newBaseDate
-
-    nextWeekDays.value = [...currentWeekDays.value]
-    currentWeekDays.value = [...previousWeekDays.value]
-    previousWeekDays.value = getWeekDates(new Date(newBaseDate.setDate(newBaseDate.getDate() - 7)))
-  } else if (direction === 'right') {
-    const newBaseDate = new Date(displayBaseDate.value)
-    newBaseDate.setDate(newBaseDate.getDate() + 7)
-    displayBaseDate.value = newBaseDate
-
-    previousWeekDays.value = [...currentWeekDays.value]
-    currentWeekDays.value = [...nextWeekDays.value]
-    nextWeekDays.value = getWeekDates(new Date(newBaseDate.setDate(newBaseDate.getDate() + 7)))
-  }
-}
-
 const handleDateClick = (date) => {
   dateStore.setSelectedDay(date)
+}
+
+const centerWeekAroundDate = (selectedDate) => {
+  const newBaseDate = new Date(selectedDate)
+  
+  // Adjust to Monday of the week
+  const dayOfWeek = newBaseDate.getDay()
+  const diff = newBaseDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)
+  newBaseDate.setDate(diff)
+  
+  currentBaseDate.value = newBaseDate
+
+  if (daysWrapper.value) {
+    gsap.set(daysWrapper.value, { x: -slideWidth.value })
+  }
 }
 
 const initializeDraggable = () => {
@@ -148,7 +141,9 @@ const initializeDraggable = () => {
             x: 0,
             duration: 0.3,
             onComplete: () => {
-              updateWeeks('left')
+              const baseDate = new Date(currentBaseDate.value)
+              baseDate.setDate(baseDate.getDate() - 7)
+              currentBaseDate.value = baseDate
               gsap.set(daysWrapper.value, { x: -slideWidth.value })
             },
           })
@@ -157,7 +152,9 @@ const initializeDraggable = () => {
             x: -slideWidth.value * 2,
             duration: 0.3,
             onComplete: () => {
-              updateWeeks('right')
+              const baseDate = new Date(currentBaseDate.value)
+              baseDate.setDate(baseDate.getDate() + 7)
+              currentBaseDate.value = baseDate
               gsap.set(daysWrapper.value, { x: -slideWidth.value })
             },
           })
@@ -172,8 +169,11 @@ const initializeDraggable = () => {
   })[0]
 }
 
+watch(() => dateStore.selectedDay, (newSelectedDay) => {
+  centerWeekAroundDate(newSelectedDay)
+}, { immediate: true })
+
 onMounted(() => {
-  initializeWeeks()
   slideWidth.value = daysWrapper.value.offsetWidth / 3
   gsap.set(daysWrapper.value, { x: -slideWidth.value })
   initializeDraggable()

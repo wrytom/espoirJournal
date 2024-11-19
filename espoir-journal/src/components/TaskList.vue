@@ -85,13 +85,12 @@ watch(
   display: flex;
   flex-direction: column;
   width: 100%;
-  overflow-y: auto;
-  max-height: 60vh;  
-  -webkit-overflow-scrolling: touch; 
-}
-
-.tasks::-webkit-scrollbar {
-  display: none; 
+  overflow-y: scroll;
+  height: 50vh;  
+  overflow-x: hidden;
+  z-index: 5;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
 }
 
 .empty-state {

@@ -28,6 +28,7 @@ import { useParticles } from '@/composables/useParticles'
 
 // Stores
 import { usePanelStore } from '@/stores/panelStore'
+import { useSwipeStore } from '@/stores/swipeStore'
 
 // Icons
 import TaskIcon from '@/assets/icons/TaskIcon.vue'
@@ -50,12 +51,14 @@ const props = defineProps({
 const emits = defineEmits(['delete', 'toggle'])
 
 const panelStore = usePanelStore()
+const swipeStore = useSwipeStore()
 const taskRef = ref(null)
 const leftRef = ref(null)
 const cancelRef = ref(null)
 const timeRef = ref(null)
 const isCompleted = ref(props.completed)
 const showCancel = ref(false)
+const isSwipingRight = ref(false) // New flag to track swipe direction
 let draggable = null
 
 const { particlesContainer, createParticles } = useParticles()
@@ -68,16 +71,23 @@ const initDraggable = () => {
       minX: -50,
       maxX: 100,
     },
+    onDragStart: function () {
+      swipeStore.startSwipe('task')
+    },
     onDrag: function () {
       if (!panelStore.isOpen && !panelStore.isOpening) {
         if (this.x > 50) {
+          swipeStore.startSwipe('task', 'right')
+          isSwipingRight.value = true // Set to true when swiping right
           gsap.to(taskRef.value, {
             scale: 0.95,
             duration: 0.1,
           })
         } else if (this.x < -25) {
+          swipeStore.startSwipe('task', 'left')
           showCancel.value = true
         } else {
+          swipeStore.endSwipe()
           showCancel.value = false
           gsap.to(taskRef.value, {
             scale: 1,
@@ -89,8 +99,10 @@ const initDraggable = () => {
     onDragEnd: function () {
       if (!panelStore.isOpen && !panelStore.isOpening) {
         if (this.x > 50) {
+          if (!isSwipingRight.value) return // Prevent deletion if swipe was closed
           isCompleted.value = !isCompleted.value
           emits('toggle')
+          swipeStore.endSwipe()
           gsap.to(taskRef.value, {
             x: 0,
             scale: 1,
@@ -110,6 +122,7 @@ const initDraggable = () => {
             ease: 'power2.out',
           })
           showCancel.value = false
+          swipeStore.endSwipe()
         }
       }
     },
@@ -139,6 +152,7 @@ watch(
           ease: 'power2.out',
         })
         showCancel.value = false
+        swipeStore.endSwipe()
       } else {
         draggable.enable()
       }
@@ -147,6 +161,9 @@ watch(
 )
 
 const handleCancel = () => {
+  // Prevent cancel action if swipe is to the right (task is being closed)
+  if (isSwipingRight.value) return
+
   const timeline = gsap.timeline()
 
   timeline
@@ -185,6 +202,7 @@ const handleCancel = () => {
       onComplete: () => {
         emits('delete')
         showCancel.value = false
+        swipeStore.endSwipe()
       },
     })
 }
