@@ -1,6 +1,6 @@
 <template>
   <div class="tasks">
-    <Task v-if="isCurrentDate" type="morning" task="Wake up" :time="settingsStore.morning" />
+    <Task v-if="isCurrentDate && settingsStore.settingsOn" type="morning" task="Wake up" :time="settingsStore.morning" />
     <Task
       v-for="task in sortedTasks"
       :key="task.id"
@@ -11,7 +11,7 @@
       @delete="deleteTask(task.id)"
       @toggle="toggleTaskCompletion(task.id)"
     />
-    <Task v-if="isCurrentDate" type="night" task="Wind down" :time="settingsStore.evening" />
+    <Task v-if="isCurrentDate && settingsStore.settingsOn" type="night" task="Wind down" :time="settingsStore.evening" />
     <div v-if="tasks.length === 0" class="empty-state">
       <img src="../assets/images/yeti.png" class="yeti" />
       <div class="empty-state-text">
@@ -85,7 +85,6 @@ watch(
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 1.5rem;
   overflow-y: auto;
   max-height: 60vh;  
   -webkit-overflow-scrolling: touch; 

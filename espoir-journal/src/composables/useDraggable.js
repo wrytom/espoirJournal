@@ -1,6 +1,6 @@
+import { ref, watch, computed } from 'vue'
 import gsap from 'gsap'
 import Draggable from 'gsap/Draggable'
-import { ref, watch } from 'vue'
 import { usePanelStore } from '@/stores/panelStore'
 
 gsap.registerPlugin(Draggable)
@@ -18,64 +18,28 @@ export const useDraggable = (elementRef, lowerPanelBgColor) => {
     bottom: window.innerHeight * 0.5,
   })
 
-  const calculateDragDistance = (startY, currentY) => {
-    return Math.abs(currentY - startY) / window.innerHeight
-  }
-
-  const getSnapTarget = (dragDistance, currentY, snapPositions) => {
-    const threshold = 0.25
-    let snapTarget = snapPositions.initial
-    if (dragDistance > threshold) {
-      snapTarget = currentY > snapPositions.bottom / 2 ? snapPositions.bottom : snapPositions.initial
-    }
-    return snapTarget
-  }
-
-  const closePanel = () => {
-    const element = elementRef.value ? elementRef.value.$el : null
-    if (!element) return
-
-    const snapPositions = getSnapPositions()
-
-    gsap.to(element, {
-      y: snapPositions.initial,
-      duration: 0.3,
-      ease: 'power3.out',
-      onUpdate: () => {
-        const newColor = calculateRGB(0)
-        gsap.to(lowerPanelBgColor, {
-          value: newColor,
-          ease: 'power3',
-        })
-      },
-      onComplete: () => {
-        panelStore.closePanel()
-      }
-    })
-  }
-
   const initializeDraggable = () => {
     const element = elementRef.value ? elementRef.value.$el : null
     if (element) {
       const snapPositions = getSnapPositions()
-      let startY = 0
       let dragProgress = 0
+      let lastColor = lowerPanelBgColor.value
 
       Draggable.create(element, {
         type: 'y',
         allowNativeTouchScrolling: true,
         bounds: { minY: 0, maxY: snapPositions.bottom },
-        onDragStart() {
-          startY = this.y
-        },
         onDrag() {
           dragProgress = this.y / snapPositions.bottom
-          lowerPanelBgColor.value = calculateRGB(dragProgress)
+          const newColor = calculateRGB(dragProgress)
+          if (newColor !== lastColor) {
+            lastColor = newColor
+            lowerPanelBgColor.value = newColor
+          }
         },
         onDragEnd() {
-          const dragDistance = calculateDragDistance(startY, this.y)
-          const snapTarget = getSnapTarget(dragDistance, this.y, snapPositions)
-          const targetProgress = snapTarget === snapPositions.bottom ? 1 : snapTarget === snapPositions.initial ? 0 : 0.4
+          const snapTarget = this.y > snapPositions.bottom / 2 ? snapPositions.bottom : snapPositions.initial
+          const targetProgress = snapTarget === snapPositions.bottom ? 1 : 0
 
           panelStore.isOpening = snapTarget === snapPositions.bottom
 
@@ -85,10 +49,7 @@ export const useDraggable = (elementRef, lowerPanelBgColor) => {
             ease: 'power3.out',
             onUpdate: () => {
               const newColor = calculateRGB(targetProgress)
-              gsap.to(lowerPanelBgColor, {
-                value: newColor,
-                ease: 'power3',
-              })
+              lowerPanelBgColor.value = newColor
             },
             onComplete: () => {
               if (snapTarget === snapPositions.initial) {
@@ -103,17 +64,7 @@ export const useDraggable = (elementRef, lowerPanelBgColor) => {
     }
   }
 
-  watch(
-    () => panelStore.isOpen,
-    (isOpen) => {
-      if (!isOpen) {
-        closePanel()
-      }
-    }
-  )
-
-  return { 
+  return {
     initializeDraggable,
-    closePanel 
   }
 }

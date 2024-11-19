@@ -1,32 +1,15 @@
 <template>
   <BaseBottomSheet
     :model-value="isVisible"
-    :initialHeight="48"
+    :initialHeight="50"
     @update:model-value="$emit('close')"
     @close="onClose"
   >
     <div class="settings-container">
-      <div class="input-group">
-        <label style="color: rgba(var(--colorBlack), 0.6)">Morning</label>
-        <div class="time-selector">
-          <label class="type-option time-option">
-            <SunIcon />
-            <span>{{ form.morning }}</span>
-            <input ref="timeInput" v-model="form.morning" type="time" required class="time-input" />
-          </label>
-        </div>
-      </div>
+      <BaseSwitch v-model="form.settingsOn" label="Show in the Task list" class="top-switch" />
 
-      <div class="input-group">
-        <label style="color: rgba(var(--colorBlack), 0.6)">Evening</label>
-        <div class="time-selector">
-          <label class="type-option time-option">
-            <MoonIcon />
-            <span>{{ form.evening }}</span>
-            <input ref="timeInput" v-model="form.evening" type="time" required class="time-input" />
-          </label>
-        </div>
-      </div>
+      <BaseTimeSelector v-model="form.morning" label="Wake up" />
+      <BaseTimeSelector v-model="form.evening" label="Wind down" />
 
       <BaseButton @click="saveSettings" text="Save Settings" />
     </div>
@@ -34,18 +17,16 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 
 // Stores
 import { useSettingsStore } from '@/stores/settingsStore'
 
 // Components
 import BaseBottomSheet from '@/components/Base/BaseBottomSheet.vue'
+import BaseTimeSelector from '@/components/Base/BaseTimeSelector.vue'
+import BaseSwitch from '@/components/Base/BaseSwitch.vue'
 import BaseButton from '@/components/Base/BaseButton.vue'
-
-// Icons
-import MoonIcon from '@/assets/icons/MoonIcon.vue'
-import SunIcon from '@/assets/icons/SunIcon.vue'
 
 const props = defineProps({
   isVisible: {
@@ -59,26 +40,40 @@ const emit = defineEmits()
 const settingsStore = useSettingsStore()
 
 const form = reactive({
+  settingsOn: settingsStore.settingsOn,
   morning: settingsStore.morning,
   evening: settingsStore.evening,
 })
+
+watch(
+  () => [form.settingsOn, form.morning, form.evening],
+  ([settingsOn, morning, evening]) => {
+    settingsStore.updateSettings(morning, evening, settingsOn)
+  }
+)
+
 
 const onClose = () => {
   emit('close')
 }
 
 const saveSettings = () => {
-  settingsStore.updateSettings(form.morning, form.evening)
+  settingsStore.updateSettings(form.morning, form.evening, form.settingsOn)
   emit('close')
 }
 </script>
+
 
 <style scoped>
 .settings-container {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  padding: 16px 0;
+}
+
+.top-switch {
+  margin-bottom: 1rem;
+  padding: 0 0.25rem;
 }
 
 .input-group {

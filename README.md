@@ -1,22 +1,16 @@
 # Espoir Journal
 
-A localStorage task management app intended for mobile use only.
+A localStorage task management app intended for mobile use only. You can create a task for each day, you can complete or delete it. There is an onboarding screen and the app provides option for setting a prefered avatar, name as well as wake up and wind down times. The unique feature of the app is the dragabble summary component which provides information for the total tasks by category for the day, along with a short summary sentence.
 
 
 ## Demo
-![Loading GIF](Demo/demo1.gif)
-![Loading GIF](Demo/demo2.gif)
-
+![Loading GIF](Demo/onboardingDemo.gif)
+![Loading GIF](Demo/appDemo.gif)
 
 
 ## Screenshots
 
-![App Screenshot](Demo/task-list.jpg)
-![App Screenshot](Demo/summary-open.jpg)
-![App Screenshot](Demo/empty-state.jpg)
-![App Screenshot](Demo/settings-sheet.jpg)
-![App Screenshot](Demo/create-task.jpg)
-![App Screenshot](Demo/update-profile.jpg)
+![App Screenshot](Demo/summaryScreenshot.jpg)
 
 
 ## The Idea Behind
@@ -39,9 +33,11 @@ The goal of this project was to build a functional Vue 3 app inspired by a desig
 
 ## Roadmap
 
-- Web and Tablet support
-- Onboarding screen and animation
-- Dark mode
+- Left/Right Swipe for a day change 🔜
+- Web and Tablet support 🔜
+- Onboarding screen and animation ✅
+- Dark mode 🔜
+- Code cleaning
 
 
 ## Acknowledgements

@@ -215,7 +215,7 @@ watch(
   justify-content: space-between;
   gap: 0.5rem;
   border-bottom: 1px dashed rgba(var(--colorBlack), 0.15);
-  margin: 1.5rem;
+  margin: 1.5rem 1.5rem 0;
   padding-bottom: 1rem;
 }
 </style>

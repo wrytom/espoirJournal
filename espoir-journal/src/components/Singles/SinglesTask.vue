@@ -178,8 +178,8 @@ const handleCancel = () => {
     })
     .to(taskRef.value, {
       height: 0,
-      opacity: 0,
       border: 'none',
+      margin: 0,
       duration: 0.3,
       delay: 0.3,
       onComplete: () => {
@@ -230,7 +230,7 @@ const swipeStyle = computed(() => ({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 0 1.5rem;
+  margin: 1.5rem;
   touch-action: pan-x;
   user-select: none;
   animation: appear 1s ease;

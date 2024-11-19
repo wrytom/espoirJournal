@@ -1,5 +1,9 @@
 <template>
-  <section class="welcome-animation" ref="welcomeAnimationRef" v-show="!showStepOne && !showStepThree">
+  <section
+    class="welcome-animation"
+    ref="welcomeAnimationRef"
+    v-show="!showStepOne && !showStepThree"
+  >
     <div class="word-container">
       <div class="word optimism" ref="optimismRef">optimism</div>
       <div class="word faith" ref="faithRef">faith</div>
@@ -18,29 +22,31 @@
     <p class="title">Tasks, Summary and Interactions all in one timeline</p>
   </section>
 
-  <button class="grey invisible" ref="buttonRef" @click="handleGetStarted" v-show="!showStepOne && !showStepThree">
+  <button
+    class="grey invisible"
+    ref="buttonRef"
+    @click="handleGetStarted"
+    v-show="!showStepOne && !showStepThree"
+  >
     Get started
   </button>
 
   <section v-show="showStepOne" class="step-one" ref="stepOneRef">
     <div class="text-step">
       <p class="caption-step">Step 1</p>
-      <p class="title-step">Set your <SunIcon color="black" fill="black" width="40px" height="40px"/> wake up and <MoonIcon color="black" fill="black" width="40px" height="40px" /> wind down hours</p>
+      <p class="title-step">
+        Set your <SunIcon color="black" fill="black" width="35px" height="35px" /> wake up and
+        <MoonIcon color="black" fill="black" width="35px" height="35px" /> wind down hours
+      </p>
     </div>
-    
     <div class="time-boxes">
-      <div class="time-box">
-        <div class="time-label">Wake up</div>
-        <input type="time" v-model="form.morning" class="time-input"/>
-      </div>
-      
-      <div class="time-box">
-        <div class="time-label">Wind down</div>
-        <input type="time" v-model="form.evening" class="time-input"/>
-      </div>
+      <BaseTimeSelector v-model="form.morning" label="Wake up" class="time-box" />
+      <BaseTimeSelector v-model="form.evening" label="Wind down" class="time-box" />
     </div>
 
-    <button class="base-button invisible" ref="nextButtonRef" @click="handleNextToThree">Next</button>
+    <button class="base-button invisible" ref="nextButtonRef" @click="handleNextToFinal">
+      Next
+    </button>
   </section>
 
   <section v-show="showStepThree" class="step-three" ref="stepThreeRef">
@@ -62,6 +68,9 @@ import gsap from 'gsap'
 
 // Stores
 import { useSettingsStore } from '@/stores/settingsStore'
+
+// Components
+import BaseTimeSelector from '@/components/Base/BaseTimeSelector.vue'
 
 // Icons
 import SunIcon from '@/assets/icons/SunIcon.vue'
@@ -97,7 +106,6 @@ const form = reactive({
   morning: settingsStore.morning,
   evening: settingsStore.evening,
 })
-
 
 onMounted(() => {
   initializeWordAnimation()
@@ -153,11 +161,11 @@ const initializeWordAnimation = () => {
     },
   })
 
-  createWordAnimation(faithRef.value, 1.2, '-=0.5')
-  createWordAnimation(aspirationRef.value, 0.9, '-=1')
-  createWordAnimation(promiseRef.value, 0.9, '-=0.9')
-  createWordAnimation(expectationRef.value, 0.7)
-  createWordAnimation(dreamRef.value, 0.6)
+  createWordAnimation(faithRef.value, 1, '-=0.5')
+  createWordAnimation(aspirationRef.value, 0.8, '-=1')
+  createWordAnimation(promiseRef.value, 0.8, '-=1')
+  createWordAnimation(expectationRef.value, 0.7, '-=0.9')
+  createWordAnimation(dreamRef.value, 0.6, '-=0.8')
   createWordAnimation(anticipationRef.value, 0.7)
   createWordAnimation(confidenceRef.value, 0.8)
 
@@ -205,20 +213,21 @@ const initializeShineEffect = () => {
 
 const handleGetStarted = () => {
   const elements = [welcomeAnimationRef.value, getStartedRef.value]
-  
+
   gsap.to(elements, {
     opacity: 0,
     duration: 0.5,
   })
-  
+
   gsap.to(buttonRef.value, {
     opacity: 0,
     duration: 0.5,
     onComplete: () => {
       showStepOne.value = true
-      gsap.fromTo(stepOneRef.value, 
+      gsap.fromTo(
+        stepOneRef.value,
         { opacity: 0 },
-        { 
+        {
           opacity: 1,
           duration: 0.5,
           onComplete: () => {
@@ -226,44 +235,46 @@ const handleGetStarted = () => {
               opacity: 1,
               duration: 1,
             })
-          }
-        }
+          },
+        },
       )
-    }
+    },
   })
 }
 
-const handleNextToThree = () => {
-
+const handleNextToFinal = () => {
   settingsStore.updateSettings(form.morning, form.evening)
 
- 
   gsap.to(stepOneRef.value, {
     opacity: 0,
     duration: 0.5,
     onComplete: () => {
       showStepThree.value = true
-      gsap.fromTo(stepThreeRef.value, 
+      gsap.fromTo(
+        stepThreeRef.value,
         { opacity: 0 },
-        { 
+        {
           opacity: 1,
           duration: 0.5,
           onComplete: () => {
-            gsap.fromTo([finalTextRef.value, finalEspoirRef.value, welcomeRef.value, finalTitleRef.value], {
-              opacity: 0,
-              y: 20,
-              
-            }, {
-              opacity: 1,
-              y: 0,
-              stagger: 0.5,
-              duration: 1.5,})
-          }
-        }
+            gsap.fromTo(
+              [finalTextRef.value, finalEspoirRef.value, welcomeRef.value, finalTitleRef.value],
+              {
+                opacity: 0,
+                y: 20,
+              },
+              {
+                opacity: 1,
+                y: 0,
+                stagger: 0.5,
+                duration: 1.5,
+              },
+            )
+          },
+        },
       )
-    }
+    },
   })
-
 }
 
 const handleFinalStart = () => {
@@ -272,13 +283,12 @@ const handleFinalStart = () => {
     duration: 1,
     ease: 'power2.inOut',
     onComplete: () => {
-
       const espoirJournal = JSON.parse(localStorage.getItem('espoirJournal')) || {}
       espoirJournal.onboarding = true
       localStorage.setItem('espoirJournal', JSON.stringify(espoirJournal))
 
       router.push({ name: 'home' })
-    }
+    },
   })
 }
 </script>
@@ -374,12 +384,13 @@ const handleFinalStart = () => {
 
 .caption-step {
   color: rgba(var(--colorBlack), 0.6);
+  font-size: 0.8rem;
 }
 
 .title-step {
   font-size: 2rem;
   font-weight: 500;
-  font-family: "Onest-SemiBold";
+  font-family: 'Onest-SemiBold';
 }
 
 .time-boxes {
@@ -392,24 +403,8 @@ const handleFinalStart = () => {
 
 .time-box {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background-color: rgba(var(--colorBlack), 0.05);
-  border-radius: 12px;
-}
-
-.time-label {
-  color: rgba(var(--colorBlack), 0.8);
-  font-family: 'Onest-Medium';
-}
-
-.time-input {
-  font-family: 'Onest-SemiBold';
-  font-size: 1.1rem;
-  border: none;
-  background: transparent;
-  outline: none;
+  background-color: rgba(var(--colorBlack), 0.02);
+  width: 100%;
 }
 
 .base-button {
@@ -454,7 +449,7 @@ const handleFinalStart = () => {
 .welcome {
   color: rgba(var(--colorBlack), 0.6);
   margin-bottom: 0.5rem;
-  opacity: 0
+  opacity: 0;
 }
 
 .final-title {

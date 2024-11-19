@@ -86,27 +86,42 @@ export const useTaskStore = defineStore('tasks', () => {
 
   const initializeStore = () => {
     const today = formatDate(new Date())
+    const now = new Date()
+    const currentHour = now.getHours().toString().padStart(2, '0')
+    const currentMinutes = now.getMinutes().toString().padStart(2, '0')
+    const currentTime = `${currentHour}:${currentMinutes}`
+  
     const sampleTasks = {
       tasks: {
         "task_1": {
           id: "task_1",
-          content: "Morning meditation",
+          content: "Drag down for a summary",
           type: "task",
-          time: "07:00",
+          time: currentTime,
           date: today,
           completed: false
         },
         "task_2": {
           id: "task_2",
-          content: "Team meeting",
+          content: "Swipe me left to complete",
           type: "task",
-          time: "10:30",
+          time: currentTime,
+          date: today,
+          completed: false
+        },
+        "task_3": {
+          id: "task_3",
+          content: "Swipe me right to delete",
+          type: "task",
+          time: currentTime,
           date: today,
           completed: false
         }
       }
     }
-    if (!localStorage.getItem('espoirJournal')) {
+  
+    const journalData = JSON.parse(localStorage.getItem('espoirJournal')) || {}
+    if (!journalData.tasks) {
       localStorage.setItem('espoirJournal', JSON.stringify(sampleTasks))
     }
   }

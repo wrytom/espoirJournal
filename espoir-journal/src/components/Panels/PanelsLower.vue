@@ -37,7 +37,6 @@ import SummaryComponent from '@/components/SummaryComponent.vue'
 const props = defineProps({
   color: {
     type: String,
-    default: 'white',
   },
 })
 
