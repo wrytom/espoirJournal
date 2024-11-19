@@ -1,12 +1,12 @@
 <template>
   <BaseBottomSheet
     :model-value="isVisible"
-    :initialHeight="50"
+    :initialHeight="42"
     @update:model-value="$emit('close')"
     @close="onClose"
   >
     <div class="settings-container">
-      <BaseSwitch v-model="form.settingsOn" label="Show in the Task list" class="top-switch" />
+      <!-- <BaseSwitch v-model="form.settingsOn" label="Show in the Task list" class="top-switch" /> -->
 
       <BaseTimeSelector v-model="form.morning" label="Wake up" />
       <BaseTimeSelector v-model="form.evening" label="Wind down" />
