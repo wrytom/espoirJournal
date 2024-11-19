@@ -8,9 +8,16 @@
     :color="color"
   >
     <path
-      d="M12 4V20M20 12H4"
+      d="M18 11.5C18 11.5 13.5811 5.50001 12 5.5C10.4188 5.49999 6 11.5 6 11.5"
       stroke="currentColor"
-      stroke-width="2"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M18 18.5C18 18.5 13.5811 12.5 12 12.5C10.4188 12.5 6 18.5 6 18.5"
+      stroke="currentColor"
+      stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
     />

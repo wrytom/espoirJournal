@@ -34,7 +34,7 @@
     <p class="task-summary" v-html="getTaskSummary()"></p>
     <p class="last">
       <span
-        ><SunIcon color="yellow" fill="yellow" width="20px" height="20px" /> {{ morningTime }}</span
+        ><SunIcon color="yellow" fill="yellow" width="20px" height="20px" />  {{ morningTime }}</span
       >
       <span
         ><MoonIcon color="rgb(164, 81, 241)" fill="rgb(164, 81, 241)" width="18px" height="18px" />

@@ -12,6 +12,8 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { usePanelStore } from '@/stores/panelStore'
+import { useDraggable } from '@/composables/useDraggable'
 import gsap from 'gsap'
 
 const props = defineProps({
@@ -19,6 +21,7 @@ const props = defineProps({
   initialHeight: { type: Number, default: 80 },
 })
 
+const panelStore = usePanelStore()
 const emit = defineEmits(['update:modelValue', 'close'])
 const sheetContent = ref(null)
 const sheetHeight = ref(props.initialHeight)
@@ -40,6 +43,10 @@ watch(
   (newVal) => {
     const metaThemeColor = document.querySelector('meta[name="theme-color"]')
     if (newVal) {
+      if (panelStore.isOpen === true) {
+        panelStore.closePanel()
+      }
+
       sheetHeight.value = props.initialHeight
       gsap.fromTo(
         sheetContent.value,

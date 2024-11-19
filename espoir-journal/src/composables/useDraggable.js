@@ -1,13 +1,12 @@
 import gsap from 'gsap'
 import Draggable from 'gsap/Draggable'
-
-// Stores
+import { ref, watch } from 'vue'
 import { usePanelStore } from '@/stores/panelStore'
 
 gsap.registerPlugin(Draggable)
 
 export const useDraggable = (elementRef, lowerPanelBgColor) => {
-  const panelStore = usePanelStore() 
+  const panelStore = usePanelStore()
 
   const calculateRGB = (progress) => {
     const value = Math.round(255 * (1 - progress))
@@ -32,6 +31,29 @@ export const useDraggable = (elementRef, lowerPanelBgColor) => {
     return snapTarget
   }
 
+  const closePanel = () => {
+    const element = elementRef.value ? elementRef.value.$el : null
+    if (!element) return
+
+    const snapPositions = getSnapPositions()
+
+    gsap.to(element, {
+      y: snapPositions.initial,
+      duration: 0.3,
+      ease: 'power3.out',
+      onUpdate: () => {
+        const newColor = calculateRGB(0)
+        gsap.to(lowerPanelBgColor, {
+          value: newColor,
+          ease: 'power3',
+        })
+      },
+      onComplete: () => {
+        panelStore.closePanel()
+      }
+    })
+  }
+
   const initializeDraggable = () => {
     const element = elementRef.value ? elementRef.value.$el : null
     if (element) {
@@ -54,9 +76,9 @@ export const useDraggable = (elementRef, lowerPanelBgColor) => {
           const dragDistance = calculateDragDistance(startY, this.y)
           const snapTarget = getSnapTarget(dragDistance, this.y, snapPositions)
           const targetProgress = snapTarget === snapPositions.bottom ? 1 : snapTarget === snapPositions.initial ? 0 : 0.4
-          
+
           panelStore.isOpening = snapTarget === snapPositions.bottom
-          
+
           gsap.to(element, {
             y: snapTarget,
             duration: 0.3,
@@ -71,8 +93,7 @@ export const useDraggable = (elementRef, lowerPanelBgColor) => {
             onComplete: () => {
               if (snapTarget === snapPositions.initial) {
                 panelStore.closePanel()
-              }
-              else if (snapTarget === snapPositions.bottom) {
+              } else if (snapTarget === snapPositions.bottom) {
                 panelStore.openPanel()
               }
             },
@@ -82,5 +103,17 @@ export const useDraggable = (elementRef, lowerPanelBgColor) => {
     }
   }
 
-  return { initializeDraggable }
+  watch(
+    () => panelStore.isOpen,
+    (isOpen) => {
+      if (!isOpen) {
+        closePanel()
+      }
+    }
+  )
+
+  return { 
+    initializeDraggable,
+    closePanel 
+  }
 }
