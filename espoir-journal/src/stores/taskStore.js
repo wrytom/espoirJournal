@@ -22,7 +22,7 @@ export const useTaskStore = defineStore('tasks', () => {
       const formattedDate = formatDate(selectedDate)
       console.log('Loading tasks for date:', formattedDate) 
       
-      const journalData = JSON.parse(localStorage.getItem('espoirJournal')) || { tasks: [] }
+      const journalData = JSON.parse(localStorage.getItem('espoirJournal')) || { tasks: {} }
       tasks.value = Object.values(journalData.tasks || {})
         .filter(task => task.date === formattedDate)
         .sort((a, b) => {
