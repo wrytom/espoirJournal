@@ -11,7 +11,7 @@
       @delete="deleteTask(task.id)"
       @toggle="toggleTaskCompletion(task.id)"
     />
-    <Task v-if="isCurrentDate && settingsStore.settingsOn" type="night" task="Wind down" :time="settingsStore.evening" />
+
     <div v-if="tasks.length === 0" class="empty-state">
       <img src="../assets/images/yeti.png" class="yeti" />
       <div class="empty-state-text">
@@ -84,7 +84,7 @@ onMounted(() => {
 })
 
 const currentPage = ref(1)
-const tasksPerPage = 5
+const tasksPerPage = 4
 
 const totalPages = computed(() => Math.ceil(tasks.value.length / tasksPerPage))
 
