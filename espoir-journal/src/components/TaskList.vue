@@ -164,7 +164,7 @@ watch(
   flex-direction: column;
   width: 100%;
   overflow-y: scroll;
-  height: 50vh;  
+  height: 55vh;  
   overflow-x: hidden;
   z-index: 5;
   touch-action: pan-y;
